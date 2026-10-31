@@ -52,6 +52,9 @@ public class PlayerCollisions implements CollisionMap {
         if (collidedOn instanceof Switch) {
             playerVersusSwitch(player, (Switch) collidedOn);
         }
+        if (collidedOn instanceof Pulse) {
+            playerVersusPulse(player, (Pulse) collidedOn);
+        }
     }
 
     private void ghostColliding(Ghost ghost, Unit collidedOn) {
@@ -93,6 +96,18 @@ public class PlayerCollisions implements CollisionMap {
         pellet.leaveSquare();
     }
 
+    private boolean hasGhost(Unit unit) {
+        if (!unit.hasSquare()) {
+            return false;
+        }
+        for (Unit occupant : unit.getSquare().getOccupants()) {
+            if (occupant instanceof Ghost) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Actual case of player activating a switch.
      *
@@ -102,6 +117,15 @@ public class PlayerCollisions implements CollisionMap {
      *           The switch involved in the collision.
      */
     public void playerVersusSwitch(Player player, Switch sw) {
-        sw.changeState();
+        if (player.isAlive() && !hasGhost(sw)) {
+            sw.changeState();
+        }
+    }
+
+    public void playerVersusPulse(Player player, Pulse pulse) {
+        if (player.isAlive() && !hasGhost(pulse)) {
+            pulse.leaveSquare();
+            pulse.activate();
+        }
     }
 }

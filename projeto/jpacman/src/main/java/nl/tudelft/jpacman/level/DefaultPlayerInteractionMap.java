@@ -61,7 +61,17 @@ public class DefaultPlayerInteractionMap implements CollisionMap {
 
         collisionMap.onCollision(Player.class, Switch.class,
             (player, sw) -> {
-                sw.changeState();
+                if (player.isAlive()) {
+                    sw.changeState();
+                }
+            });
+
+        collisionMap.onCollision(Player.class, Pulse.class,
+            (player, pulse) -> {
+                if (player.isAlive()) {
+                    pulse.leaveSquare();
+                    pulse.activate();
+                }
             });
         return collisionMap;
     }

@@ -147,6 +147,10 @@ public class PacManSprites extends SpriteStore {
         return loadSprite("/sprite/key.png");
     }
 
+    public Sprite getPulseSprite() {
+        return loadSprite("/sprite/bell.png");
+    }
+
     /**
      * Overloads the default sprite loading, ignoring the exception. This class
      * assumes all sprites are provided, hence the exception will be thrown as a

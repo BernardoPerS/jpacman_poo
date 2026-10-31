@@ -196,6 +196,9 @@ public class Launcher {
      */
     public void dispose() {
         assert pacManUI != null;
+        if (game != null) {
+            game.stop();
+        }
         pacManUI.dispose();
     }
 

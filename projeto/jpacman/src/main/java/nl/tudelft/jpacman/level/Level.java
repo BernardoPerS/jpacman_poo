@@ -1,4 +1,3 @@
-// Level.java
 package nl.tudelft.jpacman.level;
 
 import java.util.ArrayList;
@@ -74,6 +73,8 @@ public class Level {
      */
     private final List<Circuit> circuits;
 
+    private ScheduledExecutorService pulseService;
+
     /**
      * The table of possible collisions between units.
      */
@@ -83,6 +84,11 @@ public class Level {
      * The objects observing this level.
      */
     private final Set<LevelObserver> observers;
+
+    public Level(Board board, List<Ghost> ghosts, List<Square> startPositions,
+                 CollisionMap collisionMap) {
+        this(board, ghosts, startPositions, collisionMap, new ArrayList<>());
+    }
 
     /**
      * Creates a new level for the board.
@@ -170,6 +176,10 @@ public class Level {
         return board;
     }
 
+    public List<Circuit> getCircuits() {
+        return circuits;
+    }
+
     /**
      * Moves the unit into the given direction if possible and handles all
      * collisions.
@@ -245,6 +255,16 @@ public class Level {
 
             npcs.put(npc, service);
         }
+        pulseService = Executors.newSingleThreadScheduledExecutor();
+        pulseService.scheduleAtFixedRate(() -> {
+            synchronized (moveLock) {
+                if (isInProgress()) {
+                    for (Circuit circuit : circuits) {
+                        circuit.updatePulse(100);
+                    }
+                }
+            }
+        }, 100, 100, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -256,6 +276,10 @@ public class Level {
             ScheduledExecutorService schedule = entry.getValue();
             assert schedule != null;
             schedule.shutdownNow();
+        }
+        if (pulseService != null) {
+            pulseService.shutdownNow();
+            pulseService = null;
         }
     }
 

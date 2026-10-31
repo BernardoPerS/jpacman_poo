@@ -4,7 +4,7 @@
 Certifique-se de ter o ambiente Java (JDK) devidamente configurado em sua máquina.
 
 ## Passo a Passo para Execução
-1. Abra o terminal e navegue até o diretório raiz do projeto JPacman.
+1. Abra o terminal e navegue até o diretório raiz do projeto JPacman (entrega.../projeto/jpacman).
 2. Compile e execute o jogo utilizando o wrapper do Gradle com o comando correspondente ao seu sistema operacional:
    - Em terminais Linux ou macOS: `./gradlew run`
    - No Prompt de Comando do Windows: `gradlew.bat run`

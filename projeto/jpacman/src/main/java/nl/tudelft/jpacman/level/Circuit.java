@@ -23,6 +23,8 @@ public class Circuit {
      */
     private int state = Gate.CLOSED;
 
+    private long pulseTime = 0;
+
     /**
      * Gates controlled by this circuit.
      */
@@ -32,6 +34,8 @@ public class Circuit {
      * Switches associated with this circuit.
      */
     private final List<Switch> switches = new ArrayList<>();
+
+    private final List<Pulse> pulses = new ArrayList<>();
 
     /**
      * Creates a new circuit.
@@ -60,6 +64,17 @@ public class Circuit {
         return state;
     }
 
+    public boolean isPulseActive() {
+        return pulseTime > 0;
+    }
+
+    public int getAppliedCommand() {
+        if (isPulseActive()) {
+            return state == Gate.OPEN ? Gate.CLOSED : Gate.OPEN;
+        }
+        return state;
+    }
+
     /**
      * Registers a gate in this circuit.
      *
@@ -68,7 +83,7 @@ public class Circuit {
     public void addGate(Gate gate) {
         if (gate != null && gate.getGroup() == group && !gates.contains(gate)) {
             gates.add(gate);
-            gate.setState(state);
+            gate.setState(getAppliedCommand());
         }
     }
 
@@ -84,6 +99,20 @@ public class Circuit {
         }
     }
 
+    public void addPulse(Pulse pulse) {
+        if (pulse != null && pulse.getGroup() == group && !pulses.contains(pulse)) {
+            pulses.add(pulse);
+            pulse.setCircuit(this);
+        }
+    }
+
+    private void updateGates() {
+        int cmd = getAppliedCommand();
+        for (Gate gate : gates) {
+            gate.setState(cmd);
+        }
+    }
+
     /**
      * Defines a new state and notifies all its gates.
      *
@@ -91,9 +120,7 @@ public class Circuit {
      */
     public void setState(int newState) {
         this.state = newState;
-        for (Gate gate : gates) {
-            gate.setState(newState);
-        }
+        updateGates();
     }
 
     /**
@@ -101,6 +128,28 @@ public class Circuit {
      */
     public void toggle() {
         setState(state == Gate.OPEN ? Gate.CLOSED : Gate.OPEN);
+    }
+
+    public void activatePulse() {
+        this.pulseTime = 5000;
+        updateGates();
+    }
+
+    public void updatePulse(long delta) {
+        if (pulseTime > 0) {
+            pulseTime -= delta;
+            if (pulseTime <= 0) {
+                pulseTime = 0;
+                updateGates();
+            }
+        }
+    }
+
+    public boolean isValid() {
+        if (switches.isEmpty() && gates.isEmpty() && pulses.isEmpty()) {
+            return true;
+        }
+        return !switches.isEmpty() && !gates.isEmpty();
     }
 
     /**
@@ -119,5 +168,9 @@ public class Circuit {
      */
     public List<Switch> getSwitches() {
         return Collections.unmodifiableList(switches);
+    }
+
+    public List<Pulse> getPulses() {
+        return Collections.unmodifiableList(pulses);
     }
 }

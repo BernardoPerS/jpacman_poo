@@ -82,6 +82,10 @@ public class LevelFactory {
      *            A list of squares from which players may start the game.
      * @return A new level for the board.
      */
+    public Level createLevel(Board board, List<Ghost> ghosts, List<Square> startPositions) {
+        return createLevel(board, ghosts, startPositions, new java.util.ArrayList<>());
+    }
+
     public Level createLevel(Board board, List<Ghost> ghosts, List<Square> startPositions, List<Circuit> circuits) {
         CollisionMap collisionMap = new PlayerCollisions(pointCalculator);
         
@@ -135,6 +139,10 @@ public class LevelFactory {
      */
     public Switch createSwitch(int group) {
         return new Switch(group, sprites.getSwitchSprite());
+    }
+
+    public Pulse createPulse(int group) {
+        return new Pulse(group, sprites.getPulseSprite());
     }
 
     /**

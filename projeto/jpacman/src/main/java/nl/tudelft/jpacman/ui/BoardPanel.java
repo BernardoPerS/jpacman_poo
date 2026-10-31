@@ -10,6 +10,10 @@ import nl.tudelft.jpacman.board.Board;
 import nl.tudelft.jpacman.board.Square;
 import nl.tudelft.jpacman.board.Unit;
 import nl.tudelft.jpacman.game.Game;
+import nl.tudelft.jpacman.level.Circuit;
+import nl.tudelft.jpacman.level.Gate;
+import nl.tudelft.jpacman.level.Pulse;
+import nl.tudelft.jpacman.level.Switch;
 
 /**
  * Panel displaying a game.
@@ -92,6 +96,15 @@ class BoardPanel extends JPanel {
                 render(square, graphics, cellX, cellY, cellW, cellH);
             }
         }
+
+        graphics.setColor(Color.WHITE);
+        StringBuilder status = new StringBuilder("Chave=Switch | Sino=Pulso | !=Pendente");
+        for (Circuit c : game.getLevel().getCircuits()) {
+            if (c.isPulseActive()) {
+                status.append(" | Pulso C").append(c.getGroup()).append(": ATIVO");
+            }
+        }
+        graphics.drawString(status.toString(), 4, 12);
     }
 
     /**
@@ -115,6 +128,24 @@ class BoardPanel extends JPanel {
         square.getSprite().draw(graphics, x, y, width, height);
         for (Unit unit : square.getOccupants()) {
             unit.getSprite().draw(graphics, x, y, width, height);
+            if (unit instanceof Switch) {
+                graphics.setColor(Color.CYAN);
+                graphics.drawString(String.valueOf(((Switch) unit).getGroup()), x + 2, y + 12);
+            } else if (unit instanceof Pulse) {
+                graphics.setColor(Color.GREEN);
+                graphics.drawString(String.valueOf(((Pulse) unit).getGroup()), x + 2, y + 12);
+            }
+        }
+        if (square instanceof Gate) {
+            Gate gate = (Gate) square;
+            if (gate.getState() == Gate.CLOSING) {
+                graphics.setColor(Color.RED);
+                graphics.drawRect(x + 1, y + 1, width - 3, height - 3);
+                graphics.drawString(gate.getGroup() + "!", x + 2, y + 12);
+            } else {
+                graphics.setColor(Color.YELLOW);
+                graphics.drawString(String.valueOf(gate.getGroup()), x + 2, y + 12);
+            }
         }
     }
 }

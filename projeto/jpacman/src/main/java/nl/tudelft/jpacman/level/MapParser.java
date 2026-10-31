@@ -79,6 +79,12 @@ public class MapParser {
 
         makeGrid(map, width, height, grid, ghosts, startPositions, circuits);
 
+        for (Circuit circuit : circuits.values()) {
+            if (!circuit.isValid()) {
+                throw new PacmanConfigurationException("Invalid circuit " + circuit.getGroup());
+            }
+        }
+
         Board board = boardCreator.createBoard(grid);
         return levelCreator.createLevel(board, ghosts, startPositions, new ArrayList<>(circuits.values()));
     }
@@ -115,6 +121,14 @@ public class MapParser {
      * @param c
      *            Character describing the square type.
      */
+    protected void addSquare(Square[][] grid, List<Ghost> ghosts,
+                         List<Square> startPositions, int x, int y, char c) {
+        Map<Integer, Circuit> circuits = new HashMap<>();
+        circuits.put(1, new Circuit(1));
+        circuits.put(2, new Circuit(2));
+        addSquare(grid, ghosts, startPositions, x, y, c, circuits);
+    }
+
     protected void addSquare(Square[][] grid, List<Ghost> ghosts,
                          List<Square> startPositions,
                          int x, int y, char c,
@@ -163,6 +177,20 @@ public class MapParser {
                 Gate gate2 = levelCreator.createGate(2);
                 grid[x][y] = gate2;
                 circuits.get(2).addGate(gate2); 
+                break;
+            case '!':
+                Square pulseSquare1 = boardCreator.createGround();
+                grid[x][y] = pulseSquare1;
+                Pulse p1 = levelCreator.createPulse(1);
+                p1.occupy(pulseSquare1);
+                circuits.get(1).addPulse(p1);
+                break;
+            case '?':
+                Square pulseSquare2 = boardCreator.createGround();
+                grid[x][y] = pulseSquare2;
+                Pulse p2 = levelCreator.createPulse(2);
+                p2.occupy(pulseSquare2);
+                circuits.get(2).addPulse(p2);
                 break;
 
             default:
