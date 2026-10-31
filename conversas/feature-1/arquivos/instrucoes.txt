@@ -1,0 +1,17 @@
+# Instruções de Execução - JPacman (Funcionalidade 1: Portões e Interruptores)
+
+## Pré-requisitos
+Certifique-se de ter o ambiente Java (JDK) devidamente configurado em sua máquina.
+
+## Passo a Passo para Execução
+1. Abra o terminal e navegue até o diretório raiz do projeto JPacman.
+2. Compile e execute o jogo utilizando o wrapper do Gradle com o comando correspondente ao seu sistema operacional:
+   - Em terminais Linux ou macOS: `./gradlew run`
+   - No Prompt de Comando do Windows: `gradlew.bat run`
+3. A janela principal do JPacman será aberta automaticamente.
+
+## Mapa de Demonstração
+Para avaliar a nova mecânica, inicie o jogo carregando o mapa de demonstração criado especificamente para esta entrega. O arquivo de texto do mapa contém os interruptores (caracteres '1' e '2') e os respectivos portões ('a' e 'b') para validação.
+
+## Requisitos Não Atendidos e Limitações
+Não há requisitos não atendidos. Todos os comportamentos especificados foram implementados e testados com sucesso, incluindo a independência entre os circuitos, as lógicas de acionamento repetido, o bloqueio dinâmico de entidades e a trava de segurança de fechamento pendente (estado de espera quando um fantasma ocupa a posição do portão).
